@@ -1,17 +1,14 @@
 fun main() {
     fun part1(input: List<String>): Int {
-        return input.windowed(2)
-            .filter {
-                val prev = it[0].toInt()
-                val cur = it[1].toInt()
-                prev < cur
-            }.size
+        return input.map { it.toInt() }
+            .zipWithNext()
+            .count { (prev, curr) -> prev < curr }
     }
 
     fun part2(input: List<String>): Int {
-        return input.windowed(3)
-            .map { listOf(it[0].toInt(), it[1].toInt(), it[2].toInt()).sum().toString() }
-            .toList()
+        return input.map { it.toInt() }
+            .windowed(3) { it.sum() }
+            .map { it.toString() }
             .let { part1(it) }
     }
 
