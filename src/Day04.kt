@@ -2,66 +2,69 @@ typealias BoardLine = List<Int>
 
 fun main() {
 
-    class Board(private val numbers: List<BoardLine>) {
-        private val lines: List<BoardLine>
+    class Board(private val rows: List<BoardLine>) {
+        private val winPatterns: List<BoardLine>
         private val drawn = mutableListOf<Int>()
 
         init {
-            val lines = mutableListOf<BoardLine>()
+            val patterns = mutableListOf<BoardLine>()
 
             // horizontal
-            lines.addAll(numbers)
+            patterns.addAll(rows)
 
             // vertical
-            lines.addAll((0 until 5).map { i -> numbers.map { it[i] } })
+            patterns.addAll((0 until 5).map { i -> rows.map { it[i] } })
 
             // cross
             // numbers.mapIndexed { i, line -> line[i] }.also { lines.add(it) }
             // numbers.reversed().mapIndexed { i, line -> line[i] }.also { lines.add(it) }
 
-            this.lines = lines
+            this.winPatterns = patterns
         }
 
         fun mark(num: Int): Boolean {
             drawn.add(num)
             // return BINGO or not
-            return lines.any { drawn.containsAll(it) }
+            return winPatterns.any { drawn.containsAll(it) }
         }
 
-        fun unmarked() = numbers.flatten().filterNot { drawn.contains(it) }
+        fun unmarked() = rows.flatten().filterNot { drawn.contains(it) }
     }
 
-    fun extract(input: List<String>): Pair<List<Int>, List<Board>> {
+    fun prepare(input: List<String>): Pair<List<Int>, List<Board>> {
         // drawn numbers
         val nums = input.first().split(",").map { it.toInt() }
 
-        // boards each 6 lines - 5 board lines and a blank line
-        val boards = mutableListOf<Board>()
-        for (i in 1 until input.size step 6) {
-            input.subList(i + 1, i + 6)
-                .map { line -> line.split("  ", " ").filterNot { it.isEmpty() }.map { it.toInt() } }
-                .also { boards.add(Board(it)) }
-        }
+        // boards
+        val boards = input.drop(1)
+            .filterNot { it.isEmpty() }
+            .chunked(5)
+            .map { boardLines ->
+                boardLines.map { line ->
+                    line.split("  ", " ").filterNot { it.isEmpty() }.map { it.toInt() }
+                }.let { Board(it) }
+            }
+
         return Pair(nums, boards)
     }
 
     fun part1(input: List<String>): Int {
-        val (draws, boards) = extract(input)
-        for (drown in draws) {
-            boards.firstOrNull { it.mark(drown) }?.also {
-                return it.unmarked().sum() * drown
+        val (draws, boards) = prepare(input)
+        for (drawn in draws) {
+            boards.firstOrNull { it.mark(drawn) }?.also {
+                return it.unmarked().sum() * drawn
             }
         }
         throw Exception()
     }
 
     fun part2(input: List<String>): Int {
-        val (draws, boards) = extract(input)
+        val (draws, boards) = prepare(input)
         val playing = boards.toMutableList()
-        for (drown in draws) {
-            val bingo = playing.filter { it.mark(drown) }
+        for (drawn in draws) {
+            val bingo = playing.filter { it.mark(drawn) }
             if (bingo.size == 1 && playing.size == 1) {
-                return bingo[0].unmarked().sum() * drown
+                return bingo[0].unmarked().sum() * drawn
             }
             playing.removeAll(bingo)
         }
