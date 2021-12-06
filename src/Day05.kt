@@ -8,22 +8,23 @@ fun main() {
         val vertical = from.x == to.x
 
         init {
-            val covers = mutableListOf<Point>()
-            val dx = to.x - from.x
-            val dy = to.y - from.y
-            // consider only if slope==1
-            val increaseX = (1 * if (dx == 0) 0 else if (dx < 0) -1 else 1)
-            val increaseY = (1 * if (dy == 0) 0 else if (dy < 0) -1 else 1)
-
-            var x = from.x
-            var y = from.y
-            while (x != to.x + increaseX || y != to.y + increaseY) {
-                covers.add(Point(x, y))
-                x += increaseX
-                y += increaseY
+            this.covers = run {
+                val covers = mutableListOf<Point>()
+                val dx = to.x - from.x
+                val dy = to.y - from.y
+                // consider only if slope==1
+                val increaseX = (1 * if (dx == 0) 0 else if (dx < 0) -1 else 1)
+                val increaseY = (1 * if (dy == 0) 0 else if (dy < 0) -1 else 1)
+                var x = from.x
+                var y = from.y
+                while (x != to.x + increaseX || y != to.y + increaseY) {
+                    covers.add(Point(x, y))
+                    x += increaseX
+                    y += increaseY
+                }
+                // consider only if slope==1
+                covers
             }
-
-            this.covers = covers.distinct()
         }
     }
 
