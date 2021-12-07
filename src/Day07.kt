@@ -8,7 +8,7 @@ fun main() {
     }
 
     // Sn=(n(2a+(n-1)d)/2
-    fun sn(n: Int): Int = (n * (1 + n)) / 2
+    fun sn(n: Int) = (n * (1 + n)) / 2
 
     fun part1(input: List<String>): Int {
         val pos = input.first().split(",").map { it.toInt() }

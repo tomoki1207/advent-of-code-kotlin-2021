@@ -10,7 +10,7 @@ fun main() {
         }
 
         // apply days
-        for (i in 1..days) {
+        repeat(days) {
             Collections.rotate(timer, -1)
             // add reset lanternfish
             timer[6] += timer[8]
