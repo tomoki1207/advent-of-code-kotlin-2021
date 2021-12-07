@@ -1,6 +1,8 @@
+import java.util.*
+
 fun main() {
     fun countFishes(initial: List<Int>, days: Int): Long {
-        var timer = MutableList(9) { 0L }
+        val timer = MutableList(9) { 0L }
 
         // init
         for (i in initial) {
@@ -9,12 +11,9 @@ fun main() {
 
         // apply days
         for (i in 1..days) {
-            val reset = timer[0]
-            timer = timer.subList(1, 9)
+            Collections.rotate(timer, -1)
             // add reset lanternfish
-            timer[6] += reset
-            // new lanternfish
-            timer.add(reset)
+            timer[6] += timer[8]
         }
 
         return timer.sum()
