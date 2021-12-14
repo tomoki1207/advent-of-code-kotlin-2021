@@ -28,7 +28,7 @@ fun main() {
                     .let { Point(it.first().toInt(), it.last().toInt()) }
             }
         val commands = input.takeLastWhile { it.isNotBlank() }
-            .mapNotNull { if (it.startsWith("fold")) Fold(it) else null }
+            .map { Fold(it) }
         return Pair(points, commands)
     }
 
