@@ -48,21 +48,17 @@ fun main() {
     fun dijkstra(inputs: List<List<Char>>): Map<Point, Destination> {
         val destinations = initDest(inputs)
         val unresolved = PriorityQueue<Destination> { d1, d2 -> d1.totalRisk - d2.totalRisk }
-        unresolved.addAll(destinations.values)
+        unresolved.add(destinations[Point(0, 0)])
         while (unresolved.isNotEmpty()) {
-            val points = unresolved
-                .groupBy { it.totalRisk }
-                .minByOrNull { it.key }!!.value
-            points.forEach { dest ->
-                val point = dest.position.point
-                listOf(point.up(), point.down(), point.left(), point.right()).forEach { adjacent ->
-                    val toDest = destinations[adjacent] ?: return@forEach
-                    val risk = dest.totalRisk + toDest.position.risk
-                    if (risk < toDest.totalRisk) {
-                        toDest.totalRisk = risk
-                    }
+            val dest = unresolved.poll()
+            val point = dest.position.point
+            listOf(point.up(), point.down(), point.left(), point.right()).forEach { adjacent ->
+                val toDest = destinations[adjacent] ?: return@forEach
+                val risk = dest.totalRisk + toDest.position.risk
+                if (risk < toDest.totalRisk) {
+                    toDest.totalRisk = risk
+                    unresolved.add(toDest)
                 }
-                unresolved.remove(dest)
             }
         }
         return destinations
